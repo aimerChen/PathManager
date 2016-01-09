@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE configuration PUBLIC
+    "-//mybatis.org//DTD Config 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration>
+	<typeAliases>
+	    <typeAlias alias="user" type="com.chen.springHibernate.bean.User"/>
+	    <typeAlias alias="role" type="com.chen.springHibernate.bean.Role"/>
+	    <typeAlias alias="path" type="com.chen.springHibernate.bean.Path"/>
+	</typeAliases>
+	
+	<mappers>
+		<!-- User 管理 -->
+		<mapper resource="com/chen/springHibernate/mapper/User.xml"/>
+		<mapper resource="com/chen/springHibernate/mapper/Role.xml"/>
+		<mapper resource="com/chen/springHibernate/mapper/Path.xml"/>
+	</mappers>
+</configuration> 

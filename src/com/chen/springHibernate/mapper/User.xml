@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC 
+    "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.chen.springHibernate.mapper">
+	<!-- 创建用户 -->
+	<insert id="saveUser" parameterType="User" useGeneratedKeys="true"
+		keyProperty="id">
+		insert into user
+		(name,password,salt,birthday,locked,createTime)
+		values
+		(#{name},
+		#{password},
+		#{salt},
+		#{birthday},
+		#{locked},
+		now())
+
+	</insert>
+
+	<select id="queryUserByName" parameterType="java.lang.String" resultType="User">
+		select * from user
+		<where> name=#{userName} </where>
+		limit 1;
+	</select>
+
+	<select id="queryUsersByLikeName" parameterType="java.lang.String" resultType="User">
+		select * from user u
+		<where>u.name like #{name}</where>
+	</select>
+
+	<select id="queryAllUsers"  resultType="User">
+		select c.id,c.name,c.birthday,c.createTime,c.locked from user c where c.name!="chen";
+	</select>
+
+	<select id="findUserRolesById" parameterType="int" resultType="Role">
+		select * from role r where r.id in (select ru.role_id from roleuser ru where ru.user_id=#{id} );
+	</select>
+	
+	<update id="updateUser" parameterType="Map">
+		update user set 
+		<if test="birthday!=null and birthday!=''"> birthday=#{birthday}</if>
+		<if test="name!=null and name!=''"> name=#{name}</if>
+		<where> id=#{id} </where>
+	</update>
+	<delete id="deleteUserById" parameterType="java.lang.Integer">
+		delete from user
+		<where> id=#{id}</where>
+	</delete>
+
+	<!-- add role -->
+	<insert id="addRoleForUser" parameterType="Map"
+		useGeneratedKeys="true" keyProperty="id">
+		insert into roleuser(user_id,role_id) values(#{userId},#{roleId});
+	</insert>
+	
+	<delete id="deleteRoleOfUser" parameterType="Map">
+		delete from roleuser <where> role_id=#{roleId} and user_id=#{userId}</where>
+	</delete>
+
+	<delete id="deleteAllRolesOfUser" parameterType="int">
+		delete from roleuser <where> user_id=#{userId}</where>
+	</delete>
+
+</mapper>

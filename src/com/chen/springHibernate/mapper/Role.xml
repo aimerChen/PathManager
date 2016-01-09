@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC 
+    "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.chen.springHibernate.mapper">
+	<!-- 创建 -->
+	<insert id="saveRole" parameterType="Role" useGeneratedKeys="true" keyProperty="id">
+		insert into role
+			(name,createTime,updateTime)
+		values
+			(#{name},now(),now());
+	</insert>
+	<insert id="savePathForRole" parameterType="Path" useGeneratedKeys="true" keyProperty="id">
+		insert into rolepath
+			(role_id,path_id)
+		values
+			(#{roleId},#{pathId});
+	</insert>
+
+	<!-- 批量插入，没有用到 -->
+	<insert id="saveRoles" parameterType="java.util.List" useGeneratedKeys="true" keyProperty="id">
+		insert into role
+			(name,createTime,updateTime)
+		values
+		<foreach collection="list" item="item" separator="," index="index">
+			(#{item.name},now(),now());
+		</foreach>
+	</insert>
+	<!-- 批量插入，没有用到 -->
+	<insert id="savePathsForRole" parameterType="java.util.Map" useGeneratedKeys="true" keyProperty="id">
+		insert into roleapth
+			(role_id,path_id,createTime)
+		values
+		<foreach collection="list" item="item" separator="," index="index">
+			(#{roleId},#{item.id},now());
+		</foreach>
+	</insert>
+
+	<select id="queryRoleByName" parameterType="Role" resultType="Role">
+		select * from role c
+		<where> c.name=#{roleName} </where>
+		limit 1;
+	</select>
+	
+	<select id="queryRoleByRoleId" parameterType="Role" resultType="Role">
+		select * from role c
+		<where> c.id=#{id} </where>
+		limit 1;
+	</select>
+	
+	<select id="queryRolePathById" parameterType="map" resultType="Path">
+		select * from rolepath c
+		<where> c.path_id=#{pathId} and c.role_id=#{roleId}</where>
+		limit 1;
+	</select>
+	
+	<select id="queryAllRoles" resultType="Role">
+		select * from role;
+	</select>
+		
+	<select id="queryPathsByRoleId" parameterType="int" resultType="Path">
+		select * from path c where c.id in (select d.path_id from rolepath d where d.role_id=#{roleId})
+	</select>
+	
+	<delete id="deleteRole" parameterType="int">
+		delete from role <where> id=#{roleId} </where>
+	</delete>
+		
+	<delete id="deletePathsByRoleId" parameterType="int">
+		delete from rolepath <where> role_id=#{roleId} </where>
+	</delete>
+	
+	<delete id="deleteUsersByRoleId" parameterType="int">
+		delete from roleuser <where> role_id=#{roleId} </where>
+	</delete>
+	
+	<update id="updateRole" parameterType="Role">
+		update role set name=#{name},updateTime=now() <where> id=#{id}</where>;
+	</update>
+</mapper>
